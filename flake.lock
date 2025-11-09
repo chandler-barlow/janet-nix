@@ -1,0 +1,97 @@
+{
+  "nodes": {
+    "flake-parts": {
+      "inputs": {
+        "nixpkgs-lib": "nixpkgs-lib"
+      },
+      "locked": {
+        "lastModified": 1762440070,
+        "narHash": "sha256-xxdepIcb39UJ94+YydGP221rjnpkDZUlykKuF54PsqI=",
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "rev": "26d05891e14c88eb4a5d5bee659c0db5afb609d8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "type": "github"
+      }
+    },
+    "janet": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1762701623,
+        "narHash": "sha256-88Uds4NQQ0X+yAX72z3cpwwL91P6i5LZWL4Ep8dhItc=",
+        "owner": "janet-lang",
+        "repo": "janet",
+        "rev": "83f5da3b8f8719bae096234cb4c42614a8a4cef7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "janet-lang",
+        "ref": "master",
+        "repo": "janet",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1762596750,
+        "narHash": "sha256-rXXuz51Bq7DHBlfIjN7jO8Bu3du5TV+3DSADBX7/9YQ=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "b6a8526db03f735b89dd5ff348f53f752e7ddc8e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs-lib": {
+      "locked": {
+        "lastModified": 1761765539,
+        "narHash": "sha256-b0yj6kfvO8ApcSE+QmA6mUfu8IYG6/uU28OFn4PaC8M=",
+        "owner": "nix-community",
+        "repo": "nixpkgs.lib",
+        "rev": "719359f4562934ae99f5443f20aa06c2ffff91fc",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "nixpkgs.lib",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "flake-parts": "flake-parts",
+        "janet": "janet",
+        "nixpkgs": "nixpkgs",
+        "spork": "spork"
+      }
+    },
+    "spork": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1745371742,
+        "narHash": "sha256-29V4BTUc9/xNtfwXCHynuj5EI+KbSI11y36mvns0mRA=",
+        "owner": "janet-lang",
+        "repo": "spork",
+        "rev": "648b9489f8e0741ab499182db9385e7c053a0cbe",
+        "type": "github"
+      },
+      "original": {
+        "owner": "janet-lang",
+        "repo": "spork",
+        "rev": "648b9489f8e0741ab499182db9385e7c053a0cbe",
+        "type": "github"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}

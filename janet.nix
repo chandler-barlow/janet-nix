@@ -1,11 +1,7 @@
-{ pkgs, makeWrapper, stdenv, lib, ... }:
-let 
-  # We have to build janet from source
-  janet = stdenv.mkDerivation {
+{ pkgs, stdenv, lib, janetSrc, ... }:
+stdenv.mkDerivation {
     name = "janet";
-    src = builtins.fetchGit {
-      url = "https://github.com/janet-lang/janet";
-    };
+    src = janetSrc;
     postPatch =
       ''
         substituteInPlace janet.1 \
@@ -24,35 +20,4 @@ let
 
     mesonBuildType = "release";
     mesonFlags = [ "-Dgit_hash=release" ];
-
-  };
-  # Building spork from source
-  spork = stdenv.mkDerivation {
-    name = "spork";
-    src = builtins.fetchGit {
-      url = "https://github.com/janet-lang/spork";
-      rev = "648b9489f8e0741ab499182db9385e7c053a0cbe";
-      ref = "master";
-    };
-    buildInputs = [ janet ];
-    buildPhase = ''
-      mkdir $out
-      janet -l ./bundle -e '(build)'
-      export JANET_PATH=$out
-      janet -e '(bundle/install ".")'
-    '';
-  };
-in
-  stdenv.mkDerivation {
-    name = "sporked-janet";
-    buildInputs = [
-      janet
-      makeWrapper
-    ];
-    phases = [ "installPhase" ];
-    installPhase = ''
-      mkdir -p $out/bin
-      makeWrapper ${lib.getExe janet} $out/bin/janet \
-      --set JANET_PATH ${spork}
-    '';
-  }
+}

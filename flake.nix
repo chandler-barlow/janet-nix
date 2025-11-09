@@ -16,12 +16,14 @@
       url = "github:janet-lang/jpm";
       flake = false;
     };
+    devshell.url = "github:numtide/devshell";
   };
 
   outputs = inputs@{ self, flake-parts, ... }:
       flake-parts.lib.mkFlake { inherit inputs; } (top@{ config, withSystem, moduleWithSystem, ... }: {
         imports = [
           inputs.flake-parts.flakeModules.easyOverlay
+          inputs.devshell.flakeModule
         ];
         systems = [
           "x86_64-linux"
@@ -52,6 +54,7 @@
             jpm-utils = pkgs.callPackage ./jpm-utils.nix {
               inherit janet;
             };
+            test-app = final.callPackage ./tests/default.nix {};
           in
             {
               overlayAttrs = {
@@ -68,14 +71,20 @@
                     mkWrappedJanet;
                 };
               };
-              checks = self.packages // {
-                test-app = final.callPackage ./test/default.nix {};
-              };
+              checks = self.packages // {};
               packages = {
                 inherit janet;
                 inherit spork;
                 inherit janet-format;
                 inherit jpm;
+                inherit test-app;
+              };
+              devShells.default = {
+                packages = [ 
+                  janet
+                  jpm
+                  janet-format
+                ];
               };
             };
       });

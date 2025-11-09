@@ -35,6 +35,22 @@
         "type": "github"
       }
     },
+    "jpm": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1761585127,
+        "narHash": "sha256-HkYAn/s6oaIJ3Pt1XocaQ4R0+9cdXo0L/L7vM8BLnOQ=",
+        "owner": "janet-lang",
+        "repo": "jpm",
+        "rev": "207ebf3d47bbb6dbe5dcd26d5bb37ca5b8e1ed5a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "janet-lang",
+        "repo": "jpm",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1762596750,
@@ -70,6 +86,7 @@
       "inputs": {
         "flake-parts": "flake-parts",
         "janet": "janet",
+        "jpm": "jpm",
         "nixpkgs": "nixpkgs",
         "spork": "spork"
       }

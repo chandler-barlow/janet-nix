@@ -12,6 +12,10 @@
       url = "github:janet-lang/spork?rev=648b9489f8e0741ab499182db9385e7c053a0cbe";
       flake = false;
     };
+    jpm = {
+      url = "github:janet-lang/jpm";
+      flake = false;
+    };
   };
 
   outputs = inputs@{ self, flake-parts, ... }:
@@ -41,6 +45,10 @@
             janet-format = pkgs.callPackage ./janet-format.nix {
               inherit spork;
             };
+            jpm = pkgs.callPackage ./jpm.nix {
+              jpmSrc = inputs.jpm;
+              inherit janet;   
+            };
             jpm-utils = pkgs.callPackage ./jpm-utils.nix {
               inherit janet;
             };
@@ -48,6 +56,7 @@
             {
               overlayAttrs = {
                 inherit janet;
+                inherit jpm;
                 janetPackages = {
                   inherit spork;
                   inherit janet-format;
@@ -66,6 +75,7 @@
                 inherit janet;
                 inherit spork;
                 inherit janet-format;
+                inherit jpm;
               };
             };
       });

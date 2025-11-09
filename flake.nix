@@ -15,64 +15,58 @@
   };
 
   outputs = inputs@{ self, flake-parts, ... }:
-    let 
-      mkPackages = pkgs: rec {
-        janet = pkgs.callPackage ./janet.nix {
-          janetSrc = inputs.janet;
-        };
-        spork = pkgs.callPackage ./spork.nix { 
-          inherit janet; 
-          sporkSrc = inputs.spork;
-        };
-        janet-utils = pkgs.callPackage ./utils.nix { 
-          inherit janet; 
-        };
-        janet-format = pkgs.callPackage ./janet-format.nix {
-          inherit spork;
-        };
-        jpm-utils = pkgs.callPackage ./jpm-utils.nix {
-          inherit janet;
-        };
-      };
-    in
       flake-parts.lib.mkFlake { inherit inputs; } (top@{ config, withSystem, moduleWithSystem, ... }: {
+        imports = [
+          inputs.flake-parts.flakeModules.easyOverlay
+        ];
         systems = [
           "x86_64-linux"
           "aarch64-linux"
         ];
-        flake = {
-          overlays.default = final: prev: 
-            let
-              ps = mkPackages prev;
-            in
-              {
-                inherit (ps) janet;
+        # The documentation specifically says not to consume the overlay
+        # by using the provided "final" argument.
+        # I don't understand why and I am going to use it until it breaks.
+        perSystem = { config, pkgs, final, ... }: 
+          let 
+            janet = pkgs.callPackage ./janet.nix {
+              janetSrc = inputs.janet;
+            };
+            spork = pkgs.callPackage ./spork.nix { 
+              inherit janet; 
+              sporkSrc = inputs.spork;
+            };
+            janet-utils = pkgs.callPackage ./utils.nix { 
+              inherit janet; 
+            };
+            janet-format = pkgs.callPackage ./janet-format.nix {
+              inherit spork;
+            };
+            jpm-utils = pkgs.callPackage ./jpm-utils.nix {
+              inherit janet;
+            };
+          in
+            {
+              overlayAttrs = {
+                inherit janet;
                 janetPackages = {
-                  inherit (ps)
-                    spork
-                    janet-format;
-                  inherit (ps.jpm-utils) 
+                  inherit spork;
+                  inherit janet-format;
+                  inherit (jpm-utils) 
                     fetchJpmDeps 
                     mkJpmPackage 
                     mkJpmShell;
-                  inherit (ps.janet-utils)
+                  inherit (janet-utils)
                     mkWrappedJanet;
                 };
               };
-        };
-        perSystem = { config, pkgs, ... }: 
-          {
-            checks = {} // self.packages;
-            packages = 
-              let
-                ps = mkPackages pkgs;
-              in
-                {
-                  inherit (ps)
-                    janet
-                    spork
-                    janet-format;
-                };
-          };
+              checks = self.packages // {
+                test-app = final.callPackage ./test/default.nix {};
+              };
+              packages = {
+                inherit janet;
+                inherit spork;
+                inherit janet-format;
+              };
+            };
       });
 }

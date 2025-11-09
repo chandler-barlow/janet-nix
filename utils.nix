@@ -1,11 +1,11 @@
-{ pkgs ? import <nixpkgs> {}, stdenv, lib, makeWrapper, ... } :
+{ stdenv, lib, makeWrapper, janet, ... } :
 {
   # Point janet to some set of packages
   mkWrappedJanet = { janetDeps, name ? "wrapped-janet" }:
     stdenv.mkDerivation {
       inherit name;
       buildInputs = [
-        pkgs.janet
+        janet
         makeWrapper
       ];
       phases = [ "installPhase" ];

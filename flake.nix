@@ -14,42 +14,65 @@
     };
   };
 
-  outputs = inputs@{ flake-parts, ... }:
-    flake-parts.lib.mkFlake { inherit inputs; } (top@{ config, withSystem, moduleWithSystem, ... }: {
-      systems = [
-        "x86_64-linux"
-        "aarch64-linux"
-      ];
-      perSystem = { config, pkgs, ... }: 
-        let 
-          janet = pkgs.callPackage ./janet.nix {
-            janetSrc = inputs.janet;
-          };
-          spork = pkgs.callPackage ./spork.nix { 
-            inherit janet; 
-            sporkSrc = inputs.spork;
-          };
-          janet-utils = pkgs.callPackage ./utils.nix {};
-          janet-format = pkgs.callPackage ./janet-format.nix {
-            inherit spork;
-          };
-          jpm-utils = pkgs.callPackage ./jpm-utils.nix {
-            inherit janet;
-          };
-        in
+  outputs = inputs@{ self, flake-parts, ... }:
+    let 
+      mkPackages = pkgs: rec {
+        janet = pkgs.callPackage ./janet.nix {
+          janetSrc = inputs.janet;
+        };
+        spork = pkgs.callPackage ./spork.nix { 
+          inherit janet; 
+          sporkSrc = inputs.spork;
+        };
+        janet-utils = pkgs.callPackage ./utils.nix { 
+          inherit janet; 
+        };
+        janet-format = pkgs.callPackage ./janet-format.nix {
+          inherit spork;
+        };
+        jpm-utils = pkgs.callPackage ./jpm-utils.nix {
+          inherit janet;
+        };
+      };
+    in
+      flake-parts.lib.mkFlake { inherit inputs; } (top@{ config, withSystem, moduleWithSystem, ... }: {
+        systems = [
+          "x86_64-linux"
+          "aarch64-linux"
+        ];
+        flake = {
+          overlays.default = final: prev: 
+            let
+              ps = mkPackages prev;
+            in
+              {
+                inherit (ps) janet;
+                janetPackages = {
+                  inherit (ps)
+                    spork
+                    janet-format;
+                  inherit (ps.jpm-utils) 
+                    fetchJpmDeps 
+                    mkJpmPackage 
+                    mkJpmShell;
+                  inherit (ps.janet-utils)
+                    mkWrappedJanet;
+                };
+              };
+        };
+        perSystem = { config, pkgs, ... }: 
           {
-            lib = {
-              inherit (janet-utils) mkWrappedJanet;
-              inherit (jpm-utils) 
-                fetchJpmDeps 
-                mkJpmPackage 
-                mkJpmShell;
-            };
-            packages = {
-              inherit janet;
-              inherit spork;
-              inherit janet-format;
-            };
+            checks = {} // self.packages;
+            packages = 
+              let
+                ps = mkPackages pkgs;
+              in
+                {
+                  inherit (ps)
+                    janet
+                    spork
+                    janet-format;
+                };
           };
-    });
+      });
 }

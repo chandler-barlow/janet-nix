@@ -1,15 +1,15 @@
-{ pkgs ? import <nixpkgs> {} }:
+{ pkgs, janet }:
 let 
   emptyHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
-in {
+in 
+{
   fetchJpmDeps = { src ? ./., hash ? emptyHash }: pkgs.stdenv.mkDerivation {
     name = "janet-deps";
     inherit src;
-    buildInputs = 
-      with pkgs; [ 
+    buildInputs = [ 
         janet  
-        jpm 
-        git 
+        pkgs.jpm 
+        pkgs.git 
       ];
     buildPhase = ''
       mkdir $out
@@ -24,11 +24,10 @@ in {
   mkJpmPackage = { name ? "jpm-pkg", src ? ./., jpmDeps }: pkgs.stdenv.mkDerivation {
     name = name;
     inherit src;
-    buildInputs = 
-      with pkgs; [
+    buildInputs = [
         janet
-        jpm
-        git
+        pkgs.jpm
+        pkgs.git
       ];
     buildPhase = ''
       export JANET_PATH=${jpmDeps}
@@ -38,11 +37,10 @@ in {
     '';
   };
   mkJpmShell = { depsPath ? ./., buildInputs ? [] }: pkgs.mkShell {
-    buildInputs = 
-      with pkgs; [ 
+    buildInputs = [ 
         jpm
-        janet
-        git
+        pkgs.janet
+        pkgs.git
       ] ++ buildInputs;
     shellHook = ''
       export JANET_PATH=${depsPath}

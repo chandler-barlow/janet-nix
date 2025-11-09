@@ -33,12 +33,21 @@
           janet-format = pkgs.callPackage ./janet-format.nix {
             inherit spork;
           };
+          jpm-utils = pkgs.callPackage ./jpm-utils.nix {
+            inherit janet;
+          };
         in
           {
+            lib = {
+              inherit (janet-utils) mkWrappedJanet;
+              inherit (jpm-utils) 
+                fetchJpmDeps 
+                mkJpmPackage 
+                mkJpmShell;
+            };
             packages = {
               inherit janet;
               inherit spork;
-              inherit janet-utils;
               inherit janet-format;
             };
           };

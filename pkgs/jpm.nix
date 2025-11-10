@@ -25,7 +25,10 @@ in
 
     dontConfigure = true;
 
-    buildInputs = [ janet ];
+    buildInputs = [ 
+      janet 
+      pkgs.makeWrapper
+    ];
 
     dontBuild = true;
 
@@ -35,6 +38,10 @@ in
       mkdir -p $out/{lib/janet,share/man/man1}
 
       janet bootstrap.janet configs/${platformFile}
+
+      makeWrapper ./build/bin/jpm $out/bin/jpm \
+        --set JANET_LIBPATH="${pkgs.janet}/lib" \
+        --set JANET_HEADERPATH="${pkgs.janet}/include/janet"
 
       runHook postInstall
     '';

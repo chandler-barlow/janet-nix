@@ -20,3 +20,7 @@ in
 		'';
 	}
 ```
+
+## Notes
+- Makes heavy use of @turnerdev's janet-nix, with some minor updates
+- Refactored to use flake parts and has additional binaries

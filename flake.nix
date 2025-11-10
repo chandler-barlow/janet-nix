@@ -59,7 +59,7 @@
             };
             test-app = final.callPackage ./tests/default.nix {};
             mkJanet = pkgs.callPackage ./lib/mkJanet.nix {
-              inherit janet jpm janet2nx;
+              inherit janet jpm janet2nix;
             };
           in
             {

@@ -34,25 +34,29 @@
         # I don't understand why and I am going to use it until it breaks.
         perSystem = { config, pkgs, final, ... }: 
           let 
-            janet = pkgs.callPackage ./janet.nix {
+            janet = pkgs.callPackage ./pkgs/janet.nix {
               janetSrc = inputs.janet;
             };
-            spork = pkgs.callPackage ./spork.nix { 
+            spork = pkgs.callPackage ./pkgs/spork.nix { 
               inherit janet; 
               sporkSrc = inputs.spork;
             };
-            janet-utils = pkgs.callPackage ./utils.nix { 
+            janet-utils = pkgs.callPackage ./lib/utils.nix { 
               inherit janet; 
             };
-            janet-format = pkgs.callPackage ./janet-format.nix {
+            janet-format = pkgs.callPackage ./pkgs/janet-format.nix {
               inherit spork;
             };
-            jpm = pkgs.callPackage ./jpm.nix {
+            jpm = pkgs.callPackage ./pkgs/jpm.nix {
               jpmSrc = inputs.jpm;
               inherit janet;   
             };
-            jpm-utils = pkgs.callPackage ./jpm-utils.nix {
+            jpm-utils = pkgs.callPackage ./lib/jpm-utils.nix {
               inherit janet;
+            };
+            janet2nix = pkgs.callPackage ./pkgs/janet2nix {
+              inherit janet;
+              inherit jpm;
             };
             test-app = final.callPackage ./tests/default.nix {};
           in
@@ -63,6 +67,7 @@
                 janetPackages = {
                   inherit spork;
                   inherit janet-format;
+                  inherit janet2nix;
                   inherit (jpm-utils) 
                     fetchJpmDeps 
                     mkJpmPackage 
@@ -78,6 +83,7 @@
                 inherit janet-format;
                 inherit jpm;
                 inherit test-app;
+                inherit janet2nix;
               };
               devshells.default = {
                 packages = with final; [ 

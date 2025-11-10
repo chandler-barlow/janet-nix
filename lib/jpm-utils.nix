@@ -10,30 +10,17 @@ in
       buildInputs = [ 
           janet  
           pkgs.jpm 
-          pkgs.git 
+          pkgs.git
+          pkgs.cacert
         ];
+      patchShebangs = false;
       buildPhase = ''
         mkdir $out
         export JANET_PATH=$out
         mkdir ./jpm_tree
-        ln -s ${janet}/* ./jpm_tree/
-
-        echo "contents of jpm tree"
-        ls ./jpm_tree
-
-        echo "clearing lib"
-        rm ./jpm_tree/lib
-        mkdir ./jpm_tree/lib
-
-        echo "repopulating lib"
-        ln -s ${janet}/lib/* ./jpm_tree/lib/
-
-        echo "gathering deps"
-        ls
-        cat ./project.janet
-        jpm --local deps
-
-        
+        cp --no-preserve=mode -r ${janet}/* ./jpm_tree/
+        jpm --local deps 
+        rm -rf ./jpm_tree/lib/.cache
         cp -r ./jpm_tree/* $out
       '';
       outputHashAlgo = "sha256";

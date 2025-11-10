@@ -1,3 +1,4 @@
+# Fork of @turnerdev's mkJanet function
 { pkgs, janet, janet2nix, jpm, stdenv, ... }:
 {  
   name, 

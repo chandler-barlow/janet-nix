@@ -79,11 +79,12 @@
                 inherit jpm;
                 inherit test-app;
               };
-              devShells.default = {
-                packages = [ 
+              devshells.default = {
+                packages = with final; [ 
                   janet
                   jpm
-                  janet-format
+                  stdenv.cc
+                  janetPackages.janet-format
                 ];
               };
             };

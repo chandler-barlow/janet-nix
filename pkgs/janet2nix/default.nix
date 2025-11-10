@@ -24,12 +24,4 @@ stdenv.mkDerivation {
     cp build/janet2nix $out/bin/janet2nix
     chmod +x $out/bin/janet2nix
   '';
-
-  installPhase = ''
-    # mkdir -p $out/bin
-    # ls ./jpm_tree/bin
-    # mv ./build/bin/$name $out/bin/$name
-    # mv quickbin-out $out/bin/$name
-    # chmod +x $out/bin/$name
-  '';
 }

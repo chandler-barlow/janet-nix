@@ -15,13 +15,26 @@ in
       buildPhase = ''
         mkdir $out
         export JANET_PATH=$out
-        mkdir jpm_tree
-        ln -s ${janet}/* ./jpm_tree/*
+        mkdir ./jpm_tree
+        ln -s ${janet}/* ./jpm_tree/
+
+        echo "contents of jpm tree"
+        ls ./jpm_tree
+
+        echo "clearing lib"
         rm ./jpm_tree/lib
         mkdir ./jpm_tree/lib
-        ln -s ${janet}/lib/* ./jpm_tree/lib/*
+
+        echo "repopulating lib"
+        ln -s ${janet}/lib/* ./jpm_tree/lib/
+
+        echo "gathering deps"
+        ls
+        cat ./project.janet
         jpm --local deps
-        cp -r ./jpm_tree $out
+
+        
+        cp -r ./jpm_tree/* $out
       '';
       outputHashAlgo = "sha256";
       outputHashMode = "recursive";
@@ -43,6 +56,8 @@ in
         ln -s ${jpmDeps}/* ./jpm_tree/*
         rm ./jpm_tree/lib
         mkdir ./jpm_tree/lib
+        echo "hello world"
+        ls ./jpm_tree
         ln -s ${jpmDeps}/lib/* ./jpm_tree/lib/*
         jpm --local build
         cp ./build/* $out

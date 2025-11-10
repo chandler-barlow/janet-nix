@@ -55,19 +55,22 @@
               inherit janet;
             };
             janet2nix = pkgs.callPackage ./pkgs/janet2nix {
-              inherit janet;
-              inherit jpm;
+              inherit janet jpm;
             };
             test-app = final.callPackage ./tests/default.nix {};
+            mkJanet = pkgs.callPackage ./lib/mkJanet.nix {
+              inherit janet jpm janet2nx;
+            };
           in
             {
               overlayAttrs = {
-                inherit janet;
-                inherit jpm;
+                inherit janet jpm;
                 janetPackages = {
-                  inherit spork;
-                  inherit janet-format;
-                  inherit janet2nix;
+                  inherit 
+                    spork
+                    janet-format
+                    janet2nix
+                    mkJanet;
                   inherit (jpm-utils) 
                     fetchJpmDeps 
                     mkJpmPackage 
@@ -78,12 +81,13 @@
               };
               checks = self.packages // {};
               packages = {
-                inherit janet;
-                inherit spork;
-                inherit janet-format;
-                inherit jpm;
-                inherit test-app;
-                inherit janet2nix;
+                inherit 
+                  janet
+                  spork
+                  janet-format
+                  jpm
+                  test-app
+                  janet2nix;
               };
               devshells.default = {
                 packages = with final; [ 
